@@ -4,6 +4,14 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useRouter } from 'next/navigation'
 
+const NAV_LINKS = [
+  { href: '/wardrobe', label: 'Wardrobe' },
+  { href: '/chat', label: 'Stylist' },
+  { href: '/onboarding', label: 'Sync' },
+  { href: '/syncs', label: 'History' },
+  { href: '/account', label: 'Account' },
+]
+
 export default function Nav() {
   const pathname = usePathname()
   const router = useRouter()
@@ -16,46 +24,68 @@ export default function Nav() {
     router.refresh()
   }
 
-  const active = (path: string) =>
-    pathname === path || (path !== '/wardrobe' && pathname.startsWith(path))
-
-  const linkStyle = (path: string): React.CSSProperties => ({
-    fontSize: '0.875rem',
-    color: active(path) ? 'var(--ink)' : 'var(--ink-muted)',
-    textDecoration: 'none',
-    fontWeight: active(path) ? 500 : 400,
-    transition: 'color 0.15s',
-  })
+  const isActive = (href: string) =>
+    href === '/wardrobe'
+      ? pathname === '/wardrobe' || pathname.startsWith('/wardrobe/')
+      : pathname.startsWith(href)
 
   return (
     <header style={{
       borderBottom: '1px solid var(--border)',
-      padding: '0 2rem',
-      height: '56px',
+      padding: '0 2.5rem',
+      height: '54px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
-      background: 'var(--parchment)',
+      background: 'rgba(236,234,224,0.92)',
+      backdropFilter: 'blur(12px)',
+      WebkitBackdropFilter: 'blur(12px)',
       position: 'sticky',
       top: 0,
-      zIndex: 10,
+      zIndex: 100,
     }}>
-      <Link href="/wardrobe" style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', color: 'var(--ink)', textDecoration: 'none', letterSpacing: '-0.01em' }}>
+      <Link
+        href="/wardrobe"
+        style={{
+          fontFamily: 'var(--font-serif)',
+          fontSize: '1.1875rem',
+          color: 'var(--ink)',
+          textDecoration: 'none',
+          letterSpacing: '-0.01em',
+          lineHeight: 1,
+        }}
+      >
         La Mise
       </Link>
 
-      <nav style={{ display: 'flex', gap: '1.75rem', alignItems: 'center' }}>
-        <Link href="/wardrobe" style={linkStyle('/wardrobe')}>Wardrobe</Link>
-        <Link href="/chat" style={linkStyle('/chat')}>Stylist</Link>
-        <Link href="/onboarding" style={linkStyle('/onboarding')}>Sync</Link>
-        <Link href="/syncs" style={linkStyle('/syncs')}>History</Link>
-        <Link href="/account" style={linkStyle('/account')}>Account</Link>
+      <nav style={{ display: 'flex', gap: '0.25rem', alignItems: 'center' }}>
+        {NAV_LINKS.map(({ href, label }) => (
+          <Link
+            key={href}
+            href={href}
+            style={{
+              fontSize: '0.8125rem',
+              color: isActive(href) ? 'var(--ink)' : 'var(--ink-faint)',
+              textDecoration: 'none',
+              fontWeight: isActive(href) ? 500 : 400,
+              padding: '0.375rem 0.625rem',
+              borderRadius: '6px',
+              background: isActive(href) ? 'var(--surface)' : 'transparent',
+              transition: 'all 0.15s',
+            }}
+          >
+            {label}
+          </Link>
+        ))}
         <button
           onClick={handleSignOut}
           style={{
             background: 'none', border: 'none', cursor: 'pointer',
-            fontSize: '0.875rem', color: 'var(--ink-muted)', padding: 0,
+            fontSize: '0.8125rem', color: 'var(--ink-faint)', padding: '0.375rem 0.625rem',
+            borderRadius: '6px', transition: 'color 0.15s', marginLeft: '0.25rem',
           }}
+          onMouseEnter={e => (e.currentTarget.style.color = 'var(--ink-muted)')}
+          onMouseLeave={e => (e.currentTarget.style.color = 'var(--ink-faint)')}
         >
           Sign out
         </button>

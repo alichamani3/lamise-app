@@ -7,11 +7,12 @@ export default function WardrobeGrid({ items }: { items: WardrobeItem[] }) {
   return (
     <div style={{
       display: 'grid',
-      gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))',
+      gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
       gap: '1px',
       border: '1px solid var(--border)',
       borderRadius: '12px',
       overflow: 'hidden',
+      background: 'var(--border)',
     }}>
       {items.map(item => (
         <WardrobeCard key={item.id} item={item} />

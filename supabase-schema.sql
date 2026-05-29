@@ -105,6 +105,25 @@ create policy "Users can read own email syncs"
 
 -- Service role inserts are handled server-side (bypass RLS via service key)
 
+-- Chat message history
+create table public.chat_messages (
+  id uuid primary key,
+  user_id uuid references auth.users(id) on delete cascade not null,
+  role text not null check (role in ('user', 'assistant')),
+  content text not null,
+  created_at timestamptz default now()
+);
+
+alter table public.chat_messages enable row level security;
+
+create policy "Users can read own messages"
+  on public.chat_messages for select using (auth.uid() = user_id);
+
+create policy "Users can delete own messages"
+  on public.chat_messages for delete using (auth.uid() = user_id);
+
+create index chat_messages_user_id_idx on public.chat_messages(user_id, created_at);
+
 -- Storage bucket for wardrobe photos
 insert into storage.buckets (id, name, public) values ('wardrobe-photos', 'wardrobe-photos', true);
 
