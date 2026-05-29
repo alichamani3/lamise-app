@@ -105,12 +105,15 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p style={{ color: 'var(--ink-muted)', fontSize: '0.875rem', textAlign: 'center', marginTop: '1.5rem' }}>
-          No account?{' '}
-          <Link href="/signup" style={{ color: 'var(--ink)', textDecoration: 'underline' }}>
-            Sign up
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '1.5rem' }}>
+          <p style={{ color: 'var(--ink-muted)', fontSize: '0.875rem' }}>
+            No account?{' '}
+            <Link href="/signup" style={{ color: 'var(--ink)', textDecoration: 'underline' }}>Sign up</Link>
+          </p>
+          <Link href="/forgot-password" style={{ color: 'var(--ink-muted)', fontSize: '0.875rem', textDecoration: 'underline' }}>
+            Forgot password?
           </Link>
-        </p>
+        </div>
       </div>
     </div>
   )

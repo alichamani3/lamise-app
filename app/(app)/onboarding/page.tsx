@@ -1,8 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
-
-function generateForwardSlug(userId: string): string {
-  return userId.replace(/-/g, '').slice(0, 12).toLowerCase()
-}
+import { createClient as createServiceClient } from '@supabase/supabase-js'
 
 export default async function OnboardingPage() {
   const supabase = await createClient()
@@ -10,8 +7,10 @@ export default async function OnboardingPage() {
 
   if (!user) return null
 
-  const slug = generateForwardSlug(user.id)
-  const forwardAddress = `sync+${slug}@inbound.lamise.app`
+  const service = createServiceClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!)
+  const { data: profile } = await service.from('profiles').select('forward_slug').eq('id', user.id).single()
+  const slug = profile?.forward_slug ?? ''
+  const forwardAddress = slug ? `sync+${slug}@inbound.lamise.app` : 'loading…'
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto', padding: '4rem 2rem' }}>

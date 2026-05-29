@@ -37,7 +37,7 @@ export type Profile = {
   id: string
   email: string
   full_name: string | null
-  forward_email: string | null
+  forward_slug: string | null
   onboarding_complete: boolean
   created_at: string
 }

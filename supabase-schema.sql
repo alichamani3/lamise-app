@@ -29,7 +29,7 @@ begin
     new.id,
     new.email,
     new.raw_user_meta_data->>'full_name',
-    lower(replace(substring(new.id::text, 1, 12), '-', ''))
+    lower(substring(replace(new.id::text, '-', ''), 1, 12))
   );
   return new;
 end;
@@ -104,3 +104,18 @@ create policy "Users can read own email syncs"
   using (auth.uid() = user_id);
 
 -- Service role inserts are handled server-side (bypass RLS via service key)
+
+-- Storage bucket for wardrobe photos
+insert into storage.buckets (id, name, public) values ('wardrobe-photos', 'wardrobe-photos', true);
+
+create policy "Users can upload own photos"
+  on storage.objects for insert
+  with check (bucket_id = 'wardrobe-photos' and auth.uid()::text = (storage.foldername(name))[1]);
+
+create policy "Anyone can read wardrobe photos"
+  on storage.objects for select
+  using (bucket_id = 'wardrobe-photos');
+
+create policy "Users can delete own photos"
+  on storage.objects for delete
+  using (bucket_id = 'wardrobe-photos' and auth.uid()::text = (storage.foldername(name))[1]);

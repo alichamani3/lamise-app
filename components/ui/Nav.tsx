@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
 export default function Nav() {
@@ -10,17 +9,21 @@ export default function Nav() {
   const router = useRouter()
 
   async function handleSignOut() {
+    const { createClient } = await import('@/lib/supabase/client')
     const supabase = createClient()
     await supabase.auth.signOut()
     router.push('/login')
     router.refresh()
   }
 
-  const linkStyle = (path: string) => ({
+  const active = (path: string) =>
+    pathname === path || (path !== '/wardrobe' && pathname.startsWith(path))
+
+  const linkStyle = (path: string): React.CSSProperties => ({
     fontSize: '0.875rem',
-    color: pathname === path ? 'var(--ink)' : 'var(--ink-muted)',
+    color: active(path) ? 'var(--ink)' : 'var(--ink-muted)',
     textDecoration: 'none',
-    fontWeight: pathname === path ? 500 : 400,
+    fontWeight: active(path) ? 500 : 400,
     transition: 'color 0.15s',
   })
 
@@ -33,24 +36,25 @@ export default function Nav() {
       alignItems: 'center',
       justifyContent: 'space-between',
       background: 'var(--parchment)',
+      position: 'sticky',
+      top: 0,
+      zIndex: 10,
     }}>
       <Link href="/wardrobe" style={{ fontFamily: 'var(--font-serif)', fontSize: '1.25rem', color: 'var(--ink)', textDecoration: 'none', letterSpacing: '-0.01em' }}>
         La Mise
       </Link>
 
-      <nav style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
+      <nav style={{ display: 'flex', gap: '1.75rem', alignItems: 'center' }}>
         <Link href="/wardrobe" style={linkStyle('/wardrobe')}>Wardrobe</Link>
         <Link href="/chat" style={linkStyle('/chat')}>Stylist</Link>
         <Link href="/onboarding" style={linkStyle('/onboarding')}>Sync</Link>
+        <Link href="/syncs" style={linkStyle('/syncs')}>History</Link>
+        <Link href="/account" style={linkStyle('/account')}>Account</Link>
         <button
           onClick={handleSignOut}
           style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '0.875rem',
-            color: 'var(--ink-muted)',
-            padding: 0,
+            background: 'none', border: 'none', cursor: 'pointer',
+            fontSize: '0.875rem', color: 'var(--ink-muted)', padding: 0,
           }}
         >
           Sign out
